@@ -13,30 +13,24 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Get tag name
-      id: get_tag
-      uses: actions-ecosystem/action-get-tag@v1.1.0
-
-    - name: Strip "v" prefix from tag
-      id: get_version
-      run: echo "version=${TAG_NAME#v}" >> $GITHUB_OUTPUT
-      env:
-        TAG_NAME: ${{ steps.get_tag.outputs.tag }}
+    - name: Extract tag name
+      id: extract_tag
+      run: |
+        TAG_NAME="${GITHUB_REF#refs/tags/}"
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        VERSION="${TAG_NAME#v}"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Show extracted version
       run: |
-        echo "Tag: ${{ steps.get_tag.outputs.tag }}"
-        echo "Version (no 'v'): ${{ steps.get_version.outputs.version }}"
+        echo "Tag: $TAG_NAME"
+        echo "Version (no 'v'): $VERSION"
 
     - name: Update module.json with versioned URLs
       run: |
-        VERSION=${{ steps.get_version.outputs.version }}
-        TAG=${{ steps.get_tag.outputs.tag }}
-        REPO=${{ github.repository }}
-
         jq ".version = \"$VERSION\" |
-            .manifest = \"https://github.com/$REPO/releases/latest/download/module.json\" |
-            .download = \"https://github.com/$REPO/releases/download/$TAG/module.zip\"" module.json > tmp.json
+            .manifest = \"https://github.com/${{ github.repository }}/releases/latest/download/module.json\" |
+            .download = \"https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/module.zip\"" module.json > tmp.json
         mv tmp.json module.json
 
     - name: List files before zipping
