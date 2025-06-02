@@ -12,5 +12,5 @@ A simple module for FoundryVTT to track the wanted level of your party, à la GT
 - The color of the stars can be customized via the settings menu.
 
 # Installation
-- To install manually, copy and paste this link into the Foundry Add-On "Manifest URL" text box: https://github.com/snshatto/wanted-level/releases/download/v1.0.0/module.json
+- To install manually, copy and paste this link into the Foundry Add-On "Manifest URL" text box: https://github.com/snshatto/wanted-level/releases/latest/download/module.json
 - Will be searchable in the Module database once it is approved by Foundry devs.
