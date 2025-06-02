@@ -1,0 +1,42 @@
+name: Release Creation
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Extract tag version number
+      id: get_version
+      uses: battila7/get-version-action@v2
+
+    - name: Update module.json with versioned URLs
+      run: |
+        VERSION=${{ steps.get_version.outputs.version-without-v }}
+        TAG=${{ github.event.release.tag_name }}
+        REPO=${{ github.repository }}
+
+        jq ".version = \"$VERSION\" |
+            .manifest = \"https://github.com/$REPO/releases/latest/download/module.json\" |
+            .download = \"https://github.com/$REPO/releases/download/$TAG/module.zip\"" module.json > tmp.json
+        mv tmp.json module.json
+
+    - name: Create ZIP package
+      run: |
+        zip -r module.zip module.json README.md main.js styles/ templates/ lang/ || zip -r module.zip module.json README.md main.js styles/ lang/
+
+    - name: Upload assets to release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        name: ${{ github.event.release.name }}
+        draft: false
+        prerelease: ${{ github.event.release.prerelease }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: 'module.json,module.zip'
+        tag: ${{ github.event.release.tag_name }}
+        body: "Automatic release of Kill Tracker module."
