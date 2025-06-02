@@ -1,4 +1,4 @@
-![Foundry Core Compatible Version](https://img.shields.io/endpoint?url=https%3A%2F%2Ffoundryshields.com%2Fversion%3Fstyle%3Dfor-the-badge%26url%3Dhttps%3A%2F%2Fgithub.com%2Fsnshatto%2Fwanted-level%2Freleases%2Fdownload%2Fv1.0.0%2Fmodule.json)
+![Foundry Core Compatible Version](https://img.shields.io/endpoint?url=https%3A%2F%2Ffoundryshields.com%2Fversion%3Fstyle%3Dfor-the-badge%26url%3Dhttps%3A%2F%2Fgithub.com%2Fsnshatto%2Fwanted-level%2Freleases%2Flatest%2Fdownload%2Fmodule.json)
 ![Latest Version](https://img.shields.io/github/v/release/snshatto/wanted-level?style=for-the-badge)
 ![Downloads](https://img.shields.io/github/downloads/snshatto/wanted-level/total?style=for-the-badge)
 
