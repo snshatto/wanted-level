@@ -4,20 +4,34 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write  # Required to upload assets to the release
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 
-    - name: Extract tag version number
+    - name: Get tag name
+      id: get_tag
+      uses: actions-ecosystem/action-get-tag@v1
+
+    - name: Strip "v" prefix from tag
       id: get_version
-      uses: battila7/get-version-action@v2
+      run: echo "version=${TAG_NAME#v}" >> $GITHUB_OUTPUT
+      env:
+        TAG_NAME: ${{ steps.get_tag.outputs.tag }}
+
+    - name: Show extracted version
+      run: |
+        echo "Tag: ${{ steps.get_tag.outputs.tag }}"
+        echo "Version (no 'v'): ${{ steps.get_version.outputs.version }}"
 
     - name: Update module.json with versioned URLs
       run: |
-        VERSION=${{ steps.get_version.outputs.version-without-v }}
-        TAG=${{ github.event.release.tag_name }}
+        VERSION=${{ steps.get_version.outputs.version }}
+        TAG=${{ steps.get_tag.outputs.tag }}
         REPO=${{ github.repository }}
 
         jq ".version = \"$VERSION\" |
@@ -25,9 +39,15 @@ jobs:
             .download = \"https://github.com/$REPO/releases/download/$TAG/module.zip\"" module.json > tmp.json
         mv tmp.json module.json
 
+    - name: List files before zipping
+      run: ls -al
+
     - name: Create ZIP package
       run: |
         zip -r module.zip module.json README.md main.js styles/ templates/ lang/ || zip -r module.zip module.json README.md main.js styles/ lang/
+
+    - name: List files before upload
+      run: ls -al
 
     - name: Upload assets to release
       uses: ncipollo/release-action@v1
