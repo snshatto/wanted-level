@@ -39,4 +39,4 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: 'module.json,module.zip'
         tag: ${{ github.event.release.tag_name }}
-        body: "Automatic release of Kill Tracker module."
+        body: "Automatic release of Wanted Level module."
