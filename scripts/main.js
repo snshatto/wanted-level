@@ -77,8 +77,8 @@ class WantedLevelApp extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
 
+    // Do not make the tab visible yet to prevent flash
     tab.style.transition = "none";
-    tab.classList.add("visible");
 
     // Fetch panelLeft fresh from settings to ensure persistence
     const savedPanelLeft = game.settings.get("wanted-level", "panelLeft");
@@ -95,6 +95,7 @@ class WantedLevelApp extends HandlebarsApplicationMixin(ApplicationV2) {
     // Debug log before adjustment
     console.log("onRender - savedPanelLeft:", savedPanelLeft, "panelLeft:", this.panelLeft, "tabLeft:", tabLeft, "element left:", tab.style.left);
 
+    // Set the position immediately, but the element is not visible yet
     Object.assign(tab.style, {
       left: `${tabLeft}px`,
       top: "0px !important",
@@ -102,16 +103,18 @@ class WantedLevelApp extends HandlebarsApplicationMixin(ApplicationV2) {
       margin: "0"
     });
 
-    // Delayed adjustment to enforce position after render cycle
+    // Delayed adjustment to enforce position and make visible
     setTimeout(() => {
       if (this.panelLeft !== null) {
         tab.style.left = `${Math.clamp(this.panelLeft, minLeft, maxLeft)}px`;
         console.log("postRender - enforced left:", tab.style.left); // Debug log
       }
+      // Now make the tab visible after positioning
+      tab.classList.add("visible");
+      tab.style.transition = ""; // Allow transitions after positioning
     }, 0);
 
     tab.offsetHeight; // Force reflow
-    tab.style.transition = "";
 
     // Apply star color and hover effect
     const starColor = game.settings.get("wanted-level", "starColor") || "#FFD700";
@@ -119,7 +122,7 @@ class WantedLevelApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const stars = tab.querySelectorAll(".clickable-star");
     stars.forEach(star => {
       star.style.color = starColor;
-      star.style.transition = "color 0.2s ease"; // Smooth color transition on hover
+      // Removed transition to prevent blinking
       star.addEventListener("mouseover", () => {
         star.style.color = hoverColor;
       });
@@ -278,7 +281,7 @@ Hooks.once("init", () => {
     hint: game.i18n.localize("WANTED_LEVEL.ColorSettingHint"),
     scope: "world", // World-scoped, editable by GM
     config: true,
-    default: "#FFD700",
+    default: "#9f9275",
     type: String,
     restricted: true, // Only GM can change
     onChange: value => {
