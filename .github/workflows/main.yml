@@ -15,7 +15,7 @@ jobs:
 
     - name: Get tag name
       id: get_tag
-      uses: actions-ecosystem/action-get-tag@v1
+      uses: actions-ecosystem/action-get-tag@v1.1.0
 
     - name: Strip "v" prefix from tag
       id: get_version
