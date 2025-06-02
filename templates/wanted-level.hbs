@@ -1,0 +1,8 @@
+<section id="wl-tab" class="visible">
+  <span class="wl-title">
+    {{localize "WANTED_LEVEL.wanted"}}
+    {{#each starStates as |state index|}}
+      <i id="star-{{add index 1}}" class="{{getStarClass state}} clickable-star" style="color: {{starColor}};"></i>
+    {{/each}}
+  </span>
+</section>
